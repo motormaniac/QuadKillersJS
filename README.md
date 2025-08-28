@@ -7,11 +7,11 @@ Comment out top comment of main.js
 ```js
 // import * as PIXI from "pixi.js"
 ```
-Start server
+Start server (Look at [making a server](#making-a-server))
 ```
 http-server -c-1 ./src
 ```
-Between uses, press **CTRL + R** to hard refresh the page (avoid browser caching)
+Between uses, press **CTRL + + SHIFT + R** to hard refresh the page (avoid browser caching)
 
 # Installing Pixi
 
