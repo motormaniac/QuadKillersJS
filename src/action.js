@@ -15,17 +15,27 @@ Action.queue = {
 
 // Action.queue = {
 //     input: [
-//         {params:{a:1, b:2}, callback: somefunc},
+//         {
+//             frameDelay:0,
+//             params:{a:1, b:2},
+//             callback: somefunc},
 //         {...},
 //         {...}
 //     ]
 //     params is passed into callback e.g. -> somefunc({a:1, b:2})
 // }
 
-Action.update = function() {
-    //Note each loop DOES NOT look at new actions added to the queue during processing
-
-    for (let action of Action.queue.input) {
-        action.callback(action.params);
+Action.process_queue = function(queue) {
+    //for each loop iterates over a copy of the array, so we can modify the original array during iteration
+    for (let action of queue) {
+        if (action.frameDelay > 0) {
+            action.frameDelay -= 1;
+        } else {
+            action.callback(action.params);
+        }
     }
+}
+
+Action.update = function() {
+    Action.process_queue(Action.queue.input);
 }

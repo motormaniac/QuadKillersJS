@@ -15,7 +15,7 @@ Input.key_map = {}
 key_map = {
     "KeyCode":{
         is_down:true/false,
-        
+
     }
 }
 
@@ -40,19 +40,19 @@ Input.InputAction = class {
     add_keyup_event(event) {
         this.keyup_events.push(event);
     }
-    trigger_keydown() {
+    trigger_keydown(millis) {
         if (!this.is_down) {
             this.is_down = true;
-            this.keydown_time = Global.millis;
+            this.keydown_time = millis;
             for (let event of this.keydown_events) {
                 event();
             }
         }
     }
-    trigger_keyup() {
+    trigger_keyup(millis) {
         if (this.is_down) {
             this.is_down = false;
-            this.keyup_time = Global.millis;
+            this.keyup_time = millis;
             for (let event of this.keyup_events) {
                 event();
             }
@@ -79,7 +79,9 @@ Input.init_input = function() {
 }
 
 window.onkeydown = function(event) {
-    Input.key_map[event.code]?.trigger_keydown();
+    Action.queue.input.push(function() {
+        Input.key_map[event.code]?.trigger_keydown(Global.millis);
+    })
 }
 
 window.onkeyup = function(event) {

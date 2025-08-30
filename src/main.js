@@ -5,7 +5,9 @@ Global.millis = 0
 
 Global.entities = []
 
-async function start() {
+Main = {}
+
+Main.init_main = async function() {
     
     const app = new PIXI.Application();
     await app.init({ background: '#1099bb', resizeTo: window });
@@ -20,4 +22,10 @@ async function start() {
     app.stage.addChild(graphics);
 
 }
-start();
+
+
+(function() {
+    Action.init_action();
+    Input.init_input();
+    Main.init_main();
+})();
