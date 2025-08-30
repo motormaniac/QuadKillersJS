@@ -1,5 +1,10 @@
 // import * as PIXI from 'pixi.js';
 
+Global = {}
+Global.millis = 0
+
+Global.entities = []
+
 async function start() {
     
     const app = new PIXI.Application();
