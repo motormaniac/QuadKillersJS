@@ -1,14 +1,21 @@
 // import * as PIXI from 'pixi.js';
 
-Global = {}
-Global.millis = 0
+let Global = {}
+Global.seconds = 0
+Global.dt = 1
+Global.id = 0; //starts at 0 and increments for each new game object
+Global.entities = [] //list of gameobjects
 
-Global.entities = []
+Global.EntityTypes = {
+    DEFAULT: 'default',
+    PLAYER: 'player',
+    ENEMY: 'enemy',
+    WALK_ENEMY: 'walk_enemy',
+}
 
-Main = {}
+let Main = {}
 
 Main.init_main = async function() {
-    
     const app = new PIXI.Application();
     await app.init({ background: '#1099bb', resizeTo: window });
     app.canvas.setAttribute('game-canvas', 'true');
@@ -21,11 +28,16 @@ Main.init_main = async function() {
         .stroke({width:0})
     app.stage.addChild(graphics);
 
+    app.ticker.add((ticker) => {
+        Global.seconds = ticker.elapsedMS
+        Action.update();
+    });
 }
 
-
-(function() {
+myFunc = async function() {
     Action.init_action();
     Input.init_input();
-    Main.init_main();
-})();
+    await Main.init_main();
+}
+
+myFunc();

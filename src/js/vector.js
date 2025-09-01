@@ -1,0 +1,120 @@
+class Vector2D {
+    constructor(x = 0, y = 0) {
+        this.x = x;
+        this.y = y;
+    }
+
+    // Addition
+    add(v) {
+        return new Vector2D(this.x + v.x, this.y + v.y);
+    }
+
+    // Subtraction
+    sub(v) {
+        return new Vector2D(this.x - v.x, this.y - v.y);
+    }
+
+    // Scalar multiplication
+    mul(scalar) {
+        return new Vector2D(this.x * scalar, this.y * scalar);
+    }
+
+    // Scalar division
+    div(scalar) {
+        return new Vector2D(this.x / scalar, this.y / scalar);
+    }
+
+    // Dot product
+    dot(v) {
+        return this.x * v.x + this.y * v.y;
+    }
+
+    // Magnitude
+    magnitude() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    // Normalize
+    normalize() {
+        const mag = this.magnitude();
+        return mag === 0 ? new Vector2D(0, 0) : this.div(mag);
+    }
+    // Set magnitude
+    setMag(mag) {
+        const currentMag = this.magnitude();
+        if (currentMag === 0) return new Vector2D(0, 0);
+        return this.mul(mag / currentMag);
+    }
+    static random() {
+        return new Vector2D(Math.random(), Math.random());
+    }
+    static lerp(v1, v2, t) {
+        return v1.mul(1 - t).add(v2.mul(t));
+    }
+    static map(vector, a, b, c, d) {
+        return new Vector2D(
+            Util.map(vector.x, a, b, c, d),
+            Util.map(vector.y, a, b, c, d)
+        );
+    }
+    // Operator overloading using Symbol
+    static [Symbol.hasInstance](instance) {
+        return instance instanceof Vector2D;
+    }
+
+    // For operator overloading (ES2020+)
+    [Symbol.for('+')](v) {
+        return this.add(v);
+    }
+
+    [Symbol.for('-')](v) {
+        return this.sub(v);
+    }
+
+    [Symbol.for('*')](scalar) {
+        return this.mul(scalar);
+    }
+
+    [Symbol.for('/')](scalar) {
+        return this.div(scalar);
+    }
+
+    toString() {
+        return `Vector2D(${this.x}, ${this.y})`;
+    }
+
+    // Returns the angle of the vector in radians using atan2 (works in all quadrants)
+    angle() {
+        return Math.atan2(this.y, this.x);
+    }
+
+    // Clone
+    clone() {
+        return new Vector2D(this.x, this.y);
+    }
+
+    // Magnitude squared
+    magSq() {
+        return this.x * this.x + this.y * this.y;
+    }
+
+    // Static zero vector
+    static zero() {
+        return new Vector2D(0, 0);
+    }
+    static one() {
+        return new Vector2D(1, 1);
+    }
+    static up() {
+        return new Vector2D(0, -1);
+    }
+    static down() {
+        return new Vector2D(0, 1);
+    }
+    static left() {
+        return new Vector2D(-1, 0);
+    }
+    static right() {
+        return new Vector2D(1, 0);
+    }
+}
