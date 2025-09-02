@@ -34,10 +34,12 @@ Main.init_main = async function() {
     });
 }
 
-myFunc = async function() {
+
+async function start() {
+    Enemy.init_enemy();
+    Player.init_player();
     Action.init_action();
     Input.init_input();
     await Main.init_main();
 }
-
-myFunc();
+start();

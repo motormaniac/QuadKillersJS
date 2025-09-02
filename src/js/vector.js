@@ -62,23 +62,6 @@ class Vector2D {
         return instance instanceof Vector2D;
     }
 
-    // For operator overloading (ES2020+)
-    [Symbol.for('+')](v) {
-        return this.add(v);
-    }
-
-    [Symbol.for('-')](v) {
-        return this.sub(v);
-    }
-
-    [Symbol.for('*')](scalar) {
-        return this.mul(scalar);
-    }
-
-    [Symbol.for('/')](scalar) {
-        return this.div(scalar);
-    }
-
     toString() {
         return `Vector2D(${this.x}, ${this.y})`;
     }

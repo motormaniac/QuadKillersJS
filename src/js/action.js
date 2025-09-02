@@ -24,7 +24,7 @@ Action.queue = {
 //     ]
 // }
 
-Action.QueuedActionStruct = class {
+Action.QueuedAction = class {
     frameDelay = 0
     params = {}
     callback = null

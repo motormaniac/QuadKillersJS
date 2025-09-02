@@ -22,7 +22,7 @@ Input.key_map = {}
 //     "keycode":KeyMapInstanceStruct
 // }
 
-Input.KeyMapInstanceStruct = class {
+Input.KeyMapInstance = class {
     is_down = false
     input_action = null
     constructor(input_action) {
@@ -52,7 +52,7 @@ Input.InputAction = class {
     constructor(...hotkeys) {
         this.hotkeys = hotkeys;
         for (let hotkey of hotkeys) {
-            Input.key_map[hotkey] = new Input.KeyMapInstanceStruct(this);
+            Input.key_map[hotkey] = new Input.KeyMapInstance(this);
         }
     }
     /**
@@ -100,7 +100,8 @@ Input.InputAction = class {
      * @param {float} seconds The time in seconds this key was released
      */
     trigger_keyup(seconds) {
-        if (this.allow_overlap || this.check_is_down()) {
+        //ERRORR
+        if (this.allow_overlap || !this.check_is_down()) { //this line is bugged because the keymap is switched to true before this happens
             this.keyup_time = seconds;
             for (let event of this.keyup_events) {
                 event();
@@ -123,27 +124,38 @@ Input.init_input = function() {
     }
     Input.context_map.game.up.add_keydown_event(function() { console.log("up pressed") });
     Input.context_map.game.up.add_keyup_event(function() { console.log("up released") });
-    Input.context_map.game.left.add_keydown_event(function() { console.log("down pressed") });
 }
 
 window.onkeydown = function(keyevent) {
-    Action.queue.input.push(
-        new Action.QueuedActionStruct(
-            () => {
-                Input.key_map[keyevent.code]?.trigger_keydown(Global.seconds)
-                Input.key_map[keyevent.code]?.is_down = true
-            }
+    let key_map_instance = Input.key_map[keyevent.code]
+    if (key_map_instance) {
+        Action.queue.input.push(
+            new Action.QueuedAction(
+                () => {
+                    if (key_map_instance.is_down === false) {
+                        //the order of these two lines is important
+                        key_map_instance.input_action.trigger_keydown(Global.seconds);
+                        key_map_instance.is_down = true
+                    }
+                }
+            )
         )
-    )
+    }
 }
 
-window.onkeyup = function(event) {
-    Action.queue.input.push(
-        new Action.QueuedActionStruct(
-            () => {
-                Input.key_map[keyevent.code]?.trigger_keyup(Global.seconds)
-                Input.key_map[keyevent.code]?.is_down = false
-            }
+window.onkeyup = function(keyevent) {
+    let key_map_instance = Input.key_map[keyevent.code]
+    if (key_map_instance) {
+        Action.queue.input.push(
+            new Action.QueuedAction(
+                () => {
+                    if (key_map_instance.is_down === true) {
+                        //order of these two lines is important
+                        key_map_instance.is_down = false
+                        key_map_instance.input_action.trigger_keyup(Global.seconds);
+                    }
+                }
+            )
         )
-    )
+    }
 }

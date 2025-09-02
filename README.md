@@ -86,3 +86,11 @@ To be efficient, the browser caches the html and js files. Use this flag to prev
 http-server -c-1 ./src
 ```
 This disables the cache time by setting it to -1.
+
+# Production Practices
+Instead of importing many different js files, import a single, aggregate main.js file. To create this file, use the command:
+```
+node build.js
+```
+which will create a main.js file within the src directory.
+Of course, make sure the html file matches the new file scheme (ignoring the js directory and only using main.js)

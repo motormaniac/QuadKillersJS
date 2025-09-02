@@ -1,7 +1,7 @@
 let Enemy = {}
 Enemy.init_enemy = function() {}
 
-Enemy.WalkEnemy = class extends Enemy.EnemyBase {
+Enemy.WalkEnemy = class extends GameObject {
     types = [
         Global.EntityTypes.ENEMY,
         Global.EntityTypes.WALK_ENEMY,
@@ -9,6 +9,10 @@ Enemy.WalkEnemy = class extends Enemy.EnemyBase {
     max_acceleration = 200;
     max_speed = 100;
 
+    constructor() {
+        super();
+    }
+    
     init() {
         let avoid_enemy_ic = new Enemy.AvoidEnemyIC(this);
         interact_components = {
@@ -25,8 +29,8 @@ Enemy.AvoidEnemyIC = class extends InteractComponent {
         this.power = power;
     }
     run(other) {
-        let delta = this.parent.position - other.position;
-        if (delta.mag() > this.ignore_radius) return;
+        let delta = this.parent.position.sub(other.position);
+        if (delta.magSq() > Math.pow(this.ignore_radius,2)) return;
         let avoidComponent = delta.setMag(this.power);
         this.parent.acceleration += avoidComponent;
     }
