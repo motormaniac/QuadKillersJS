@@ -10,19 +10,21 @@ class Vector2D {
     }
 
     // Addition
-    add(x,y) {
+    add(x,y=undefined) {
+        if (y=undefined) {
+            return new Vector2D(this.x+x.x, this.y+x.y)
+        } else {
         return new Vector2D(this.x + x, this.y + y);
-    }
-    addv(v) {
-        return new Vector2D(this.x + v.x, this.y + v.y);
+        }
     }
 
     // Subtraction
-    sub(x,y) {
+    sub(x,y=undefined) {
+        if (y=undefined) {
+            return new Vector2D(this.x-x.x, this.y-x.y)
+        } else {
         return new Vector2D(this.x - x, this.y - y);
-    }
-    subv(v) {
-        return new Vector2D(this.x - v.x, this.y - v.y);
+        }
     }
 
     // Scalar multiplication
