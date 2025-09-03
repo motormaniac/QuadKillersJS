@@ -4,21 +4,28 @@
 class GameObject {
     id = 0; //unique identifier for this object
     types = [Global.EntityTypes.DEFAULT]; //list of entity types this object belongs to
+    collider = null;
     position = Vector2D.zero();
     velocity = Vector2D.zero();
-    collider = null;
     acceleration = Vector2D.zero();
     rotation = 0; //radians
-    scale = Vector2D.one();
     delete = false; //if true, this object will be deleted at the end of the frame
 
+    /**
+     * The extended class should call its parents constructor:
+     * ```js
+     * //child constructor
+     * constructor() {
+     *      super()
+     * }
+     * ```
+     */
     constructor() {
         this.id = Global.id;
-        id ++;
+        Global.id ++;
         Action.queue.entity_init.push(
-            new Action.QueuedActionStruct(
-                //not really sure what bind does tbh
-                this.init.bind(this)
+            new Action.QueuedAction(
+                ()=> this.init()
             )
         );
     }
@@ -39,10 +46,12 @@ class GameObject {
     interact_components = {}
 
     /**
+     * Override this
      * Note that the constructor is called when the object is created, while init is called at a specific point in the action cycle
      */
     init(){}
     /**
+     * Do not override
      * Checks collisions and interactions with other game objects.
      * Does a for loop through all game objects and checks for collisions/interactions.
      * @param {int} index The index of this object in the Global.entities array
@@ -61,7 +70,14 @@ class GameObject {
      * Called when this object interacts with another object (e.g. collision)
      */
     update(){}
-    draw(graphics){}
+    /**
+     * Do not override
+     */
+    phys_update() {
+        this.velocity = this.velocity.addv(this.acceleration).mul(Global.dt)
+        this.position = this.position.addv(this.velocity).mul(Global.dt)
+    }
+    draw(){}
     onDelete(){}
 }
 

@@ -3,14 +3,25 @@ class Vector2D {
         this.x = x;
         this.y = y;
     }
+    
+    // Clone
+    clone() {
+        return new Vector2D(this.x, this.y);
+    }
 
     // Addition
-    add(v) {
+    add(x,y) {
+        return new Vector2D(this.x + x, this.y + y);
+    }
+    addv(v) {
         return new Vector2D(this.x + v.x, this.y + v.y);
     }
 
     // Subtraction
-    sub(v) {
+    sub(x,y) {
+        return new Vector2D(this.x - x, this.y - y);
+    }
+    subv(v) {
         return new Vector2D(this.x - v.x, this.y - v.y);
     }
 
@@ -29,16 +40,22 @@ class Vector2D {
         return this.x * v.x + this.y * v.y;
     }
 
-    // Magnitude
-    magnitude() {
-        return Math.sqrt(this.x * this.x + this.y * this.y);
-    }
-
     // Normalize
     normalize() {
         const mag = this.magnitude();
         return mag === 0 ? new Vector2D(0, 0) : this.div(mag);
     }
+
+    // Magnitude
+    magnitude() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    // Magnitude squared
+    magSq() {
+        return this.x * this.x + this.y * this.y;
+    }
+
     // Set magnitude
     setMag(mag) {
         const currentMag = this.magnitude();
@@ -69,16 +86,6 @@ class Vector2D {
     // Returns the angle of the vector in radians using atan2 (works in all quadrants)
     angle() {
         return Math.atan2(this.y, this.x);
-    }
-
-    // Clone
-    clone() {
-        return new Vector2D(this.x, this.y);
-    }
-
-    // Magnitude squared
-    magSq() {
-        return this.x * this.x + this.y * this.y;
     }
 
     // Static zero vector

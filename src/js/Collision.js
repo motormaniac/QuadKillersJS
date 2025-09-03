@@ -1,20 +1,32 @@
-class Collider {
-    // Polymorphism: Subclasses will override these methods
-    getType() {
-      throw new Error("gettype error");
-    }
+Collider = {}
 
-    setPos(x, y = undefined) {
-      if (arg2 !== undefined) {
-        throw new Error("setpos2 error");
-      }
-      throw new Error("setpos error");
-    }
+Collider.ColliderTypes = {
+  BOX:"box",
+  CIRCLE:"circle",
+  LINE:"line"
+}
 
-    visualize(isTouching = false) {
-      throw new Error("visualize error");
-    }
+/**
+ * Never instantiate this class directly. Use a specific type of collider
+ */
+Collider.ColliderBase = class {
+  type = ""
+  // Polymorphism: Subclasses will override these methods
+  getType() {
+    return type
   }
+
+  setPos(x, y = undefined) {
+    if (arg2 !== undefined) {
+      throw new Error("setpos2 error");
+    }
+    throw new Error("setpos error");
+  }
+
+  visualize(isTouching = false) {
+    throw new Error("visualize error");
+  }
+}
 
   // Collision testing function
   function testColl(a, b) {
@@ -37,25 +49,25 @@ class Collider {
       let coll = false;
       // Large switch case to choose the correct collision detection function
       switch (aType) {
-        case 0:
+        case "box":
           switch (bType) {
-            case 0: coll = BoxBoxColl(a, b); break;
-            case 1: coll = BoxLineColl(a, b); break;
-            case 2: coll = BoxCircleColl(a, b); break;
+            case "box": coll = BoxBoxColl(a, b); break;
+            case "line": coll = BoxLineColl(a, b); break;
+            case "circle": coll = BoxCircleColl(a, b); break;
           }
           break;
-        case 1:
+        case "line":
           switch (bType) {
-            case 0: coll = LineBoxColl(a, b); break;
-            case 1: coll = LineLineColl(a, b); break;
-            case 2: coll = LineCircleColl(a, b); break;
+            case "box": coll = LineBoxColl(a, b); break;
+            case "line": coll = LineLineColl(a, b); break;
+            case "circle": coll = LineCircleColl(a, b); break;
           }
           break;
-        case 2:
+        case "circle":
           switch (bType) {
-            case 0: coll = CircleBoxColl(a, b); break;
-            case 1: coll = CircleLineColl(a, b); break;
-            case 2: coll = CircleCircleColl(a, b); break;
+            case "box": coll = CircleBoxColl(a, b); break;
+            case "line": coll = CircleLineColl(a, b); break;
+            case "circle": coll = CircleCircleColl(a, b); break;
           }
           break;
       }
@@ -99,6 +111,7 @@ class Collider {
 
   // BoxColl class
   class BoxColl extends Collider {
+    type = Collider.ColliderTypes.BOX
     constructor(a, b, c, d, mode) {
       super();
       this.p1 = new PIXI.point(); // Upper left corner
@@ -143,10 +156,6 @@ class Collider {
       }
     }
 
-    getType() {
-      return 0;
-    }
-
     setPos(x, y = undefined) {
       if (y !== undefined) {
         this.setValues(x, y, this.size.x, this.size.y, CENTER);
@@ -165,16 +174,13 @@ class Collider {
   }
   // LineColl class
   class LineColl extends Collider {
+    type = Collider.ColliderTypes.LINE
     constructor(x1, y1, x2, y2) {
       super();
       this.p1 = new PIXI.point();
       this.p2 = new PIXI.point();
       this.boundingBox = new BoxColl(); // Reference to bounding box
       if (x1 !== undefined) this.setValues(x1, y1, x2, y2);
-    }
-
-    getType() {
-      return 1;
     }
 
     setValues(p1, p2) {
@@ -209,16 +215,13 @@ class Collider {
 
   // CircleColl class
   class CircleColl extends Collider {
+    type = Collider.ColliderTypes.CIRCLE
     constructor(x, y, r) {
       super();
       this.center = new PIXI.point(); // Center of circle
       this.radius = 0; // Radius of circle
       this.boundingBox = new BoxColl(); // Reference to bounding box
       if (x !== undefined) { this.setValues(x, y, r); }
-    }
-
-    getType() {
-      return 2;
     }
 
     setValues(x, y, r) {

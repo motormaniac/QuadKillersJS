@@ -5,7 +5,7 @@
 //file global
 let Input = {}
 
-Input.CONTEXT_ENUM = {
+Input.ContextEnum = {
     REBIND:"rebind",
     UI:"ui",
     GAME:"game",
@@ -23,7 +23,7 @@ Input.key_map = {}
 // }
 
 Input.KeyMapInstance = class {
-    is_down = false
+    is_pressed = false
     input_action = null
     constructor(input_action) {
         this.input_action = input_action;
@@ -72,23 +72,23 @@ Input.InputAction = class {
     /**
      * @returns {boolean} True if any of the hotkeys are currently pressed
      */
-    check_is_down() {
-        //or
-        let is_down = false;
+    is_pressed() {
+        //or operation of all the hotkeys
+        let is_pressed = false;
         for (let hotkey of this.hotkeys) {
-            if (Input.key_map[hotkey]?.is_down) {
-                is_down = true;
+            if (Input.key_map[hotkey]?.is_pressed) {
+                is_pressed = true;
                 break;
             }
         }
-        return is_down;
+        return is_pressed;
     }
     /**
      * Internal function triggered when key is pressed
      * @param {float} seconds The time in seconds this key was pressed
      */
     trigger_keydown(seconds) {
-        if (this.allow_overlap || !this.check_is_down()) {
+        if (this.allow_overlap || !this.is_pressed()) {
             this.keydown_time = seconds;
             for (let event of this.keydown_events) {
                 event();
@@ -101,7 +101,7 @@ Input.InputAction = class {
      */
     trigger_keyup(seconds) {
         //ERRORR
-        if (this.allow_overlap || !this.check_is_down()) { //this line is bugged because the keymap is switched to true before this happens
+        if (this.allow_overlap || !this.is_pressed()) { //this line is bugged because the keymap is switched to true before this happens
             this.keyup_time = seconds;
             for (let event of this.keyup_events) {
                 event();
@@ -110,20 +110,20 @@ Input.InputAction = class {
     }
 }
 
-
 //Initializes variables inside this file
-Input.init_input = function() {
+Input.init_file = function() {
+    this.current_context = Input.ContextEnum.GAME
     Input.context_map = {
-        "game":{
-            "up": new Input.InputAction("KeyW", "ArrowUp"),
-            "down": new Input.InputAction("KeyS", "ArrowDown"),
-            "left": new Input.InputAction("KeyA", "ArrowLeft"),
-            "right": new Input.InputAction("KeyD", "ArrowRight"),
-            "dash": new Input.InputAction("Space"),
+        game:{
+            up: new Input.InputAction("KeyW", "ArrowUp"),
+            down: new Input.InputAction("KeyS", "ArrowDown"),
+            left: new Input.InputAction("KeyA", "ArrowLeft"),
+            right: new Input.InputAction("KeyD", "ArrowRight"),
+            dash: new Input.InputAction("Space"),
         }
     }
-    Input.context_map.game.up.add_keydown_event(function() { console.log("up pressed") });
-    Input.context_map.game.up.add_keyup_event(function() { console.log("up released") });
+    // Input.context_map.game.up.add_keydown_event(function() { console.log("up pressed") });
+    // Input.context_map.game.up.add_keyup_event(function() { console.log("up released") });
 }
 
 window.onkeydown = function(keyevent) {
@@ -132,10 +132,10 @@ window.onkeydown = function(keyevent) {
         Action.queue.input.push(
             new Action.QueuedAction(
                 () => {
-                    if (key_map_instance.is_down === false) {
+                    if (key_map_instance.is_pressed === false) {
                         //the order of these two lines is important
                         key_map_instance.input_action.trigger_keydown(Global.seconds);
-                        key_map_instance.is_down = true
+                        key_map_instance.is_pressed = true
                     }
                 }
             )
@@ -149,9 +149,9 @@ window.onkeyup = function(keyevent) {
         Action.queue.input.push(
             new Action.QueuedAction(
                 () => {
-                    if (key_map_instance.is_down === true) {
+                    if (key_map_instance.is_pressed === true) {
                         //order of these two lines is important
-                        key_map_instance.is_down = false
+                        key_map_instance.is_pressed = false
                         key_map_instance.input_action.trigger_keyup(Global.seconds);
                     }
                 }

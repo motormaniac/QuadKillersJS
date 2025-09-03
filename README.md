@@ -1,7 +1,15 @@
 # QuadKillers Using PixiJS
 
 FUTURE ME PLEASE READ THIS SO THAT YOU UNDERSTAND WHAT'S HAPPENING
+## Table of Contents
 
+- [QuadKillers Using PixiJS](#quadkillers-using-pixijs)
+- [Basic Usage](#basic-usage)
+- [Installing Pixi](#installing-pixi)
+- [Accessing the pixi library](#accessing-the-pixi-library)
+- [Making a server](#making-a-server)
+- [Server Caching](#server-caching)
+- [Production Practices](#production-practices)
 # Basic Usage
 Comment out top comment of main.js
 ```js
@@ -94,3 +102,6 @@ node build.js
 ```
 which will create a main.js file within the src directory.
 Of course, make sure the html file matches the new file scheme (ignoring the js directory and only using main.js)
+
+# Using the Gameloop
+The arrow function binds the context it was created in

@@ -1,5 +1,5 @@
 let Enemy = {}
-Enemy.init_enemy = function() {}
+Enemy.init_file = function() {}
 
 Enemy.WalkEnemy = class extends GameObject {
     types = [

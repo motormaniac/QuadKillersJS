@@ -5,17 +5,15 @@
 
 let Action = {}
 
-Action.init_action = function() {
+Action.init_file = function() {
 }
 
 //This list represents the order of queues
 Action.queue = {
     input: [],
     entity_init: [],
-    collisions: [],
-    physics: [],
-    render: [],
-    entity_delete:[],
+    pre_interact:[],
+    post_interact:[],
 }
 
 // Action.queue = {
@@ -59,17 +57,28 @@ Action.update_queue = function(queue_array) {
     }
 }
 
-Action.update = function() {
+Action.update = function(ticker) {
+    //entity init
+    Action.update_queue(Action.queue.entity_init);
     //input
     Action.update_queue(Action.queue.input);
-    Action.update_queue(Action.queue.entity_init);
+    //pre interact
+    Action.update_queue(Action.queue.pre_interact)
     //check interactions
     for (let entity of Global.entities) {
-        entity.check_interactions(entity.id);
+        entity.check_interactions(entity.id, ticker);
     }
+    //post interact
+    Action.update_queue(Action.queue.post_interact);
     //update
     for (let entity of Global.entities) {
-        entity.update();
+        entity.update(ticker);
+    }
+    for (let entity of Global.entities) {
+        entity.phys_update()
+    }
+    for (let entity of Global.entities) {
+        entity.draw()
     }
     //delete
     for (let [index, entity] of Global.entities.entries()) {
