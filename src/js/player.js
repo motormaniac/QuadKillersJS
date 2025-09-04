@@ -12,7 +12,9 @@ Player.PlayerStates = {
 
 Player.PlayerClass = class extends GameObject {
     types = [Global.EntityTypes.PLAYER];
-    max_velocity = 10
+    move_acceleration = 2; //acceleration while using WASD
+    max_speed = 5
+    frict_factor = 0.38; //friction
     can_move = true //whether computer inputs can control the player
     graphics = null
 
@@ -23,6 +25,7 @@ Player.PlayerClass = class extends GameObject {
     init() {
         this.graphics = new PIXI.Graphics(Player.player_graphics_context);
         Global.app.stage.addChild(this.graphics);
+        // Input.context_map.game.dash.add_keydown_event()
     }
 
     change_to_state(state) {
@@ -46,12 +49,15 @@ Player.PlayerClass = class extends GameObject {
                 input_dir = input_dir.add(-1,0)
             }
             //make sure that movement does not override kb effects
-            if (this.can_move && this.velocity.magSq() <= Math.pow(this.max_velocity+0.1,2)) { //little bit of float tolerance
-                this.velocity = input_dir.setMag(this.max_velocity)
+            if (this.can_move && this.velocity.magSq() <= Math.pow(this.max_speed+0.1,2)) { //little bit of float tolerance
+                this.acceleration = input_dir.setMag(this.move_acceleration)
             }
+            //apply friction proportional to velocity
+            this.acceleration = this.acceleration.add(this.velocity.mul(-this.frict_factor))
         }
     }
     draw() {
+        console.log(this.velocity.magnitude())
         this.graphics.position.set(this.position.x, this.position.y)
     }
 }

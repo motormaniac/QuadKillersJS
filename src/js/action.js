@@ -10,10 +10,10 @@ Action.init_file = function() {
 
 //This list represents the order of queues
 Action.queue = {
-    input: [],
     entity_init: [],
     pre_interact:[],
     post_interact:[],
+    input: [],
 }
 
 // Action.queue = {
@@ -60,8 +60,6 @@ Action.update_queue = function(queue_array) {
 Action.update = function(ticker) {
     //entity init
     Action.update_queue(Action.queue.entity_init);
-    //input
-    Action.update_queue(Action.queue.input);
     //pre interact
     Action.update_queue(Action.queue.pre_interact)
     //check interactions
@@ -70,6 +68,8 @@ Action.update = function(ticker) {
     }
     //post interact
     Action.update_queue(Action.queue.post_interact);
+    //input
+    Action.update_queue(Action.queue.input);
     //update
     for (let entity of Global.entities) {
         entity.update(ticker);
