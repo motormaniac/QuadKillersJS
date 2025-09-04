@@ -74,8 +74,8 @@ class GameObject {
      * Do not override
      */
     phys_update() {
-        this.velocity = this.velocity.addv(this.acceleration).mul(Global.dt)
-        this.position = this.position.addv(this.velocity).mul(Global.dt)
+        this.velocity = this.velocity.add(this.acceleration).mul(Global.dt)
+        this.position = this.position.add(this.velocity).mul(Global.dt)
     }
     draw(){}
     onDelete(){}
