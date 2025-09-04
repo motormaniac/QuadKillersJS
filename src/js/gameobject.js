@@ -74,7 +74,6 @@ class GameObject {
      * Do not override
      */
     phys_update() {
-        console.log(this.velocity.add(new Vector2D(1,1)))
         this.velocity = this.velocity.add(this.acceleration.mul(Global.dt))
         this.position = this.position.add(this.velocity.mul(Global.dt))
     }

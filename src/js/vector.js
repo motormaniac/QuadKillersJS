@@ -11,16 +11,16 @@ class Vector2D {
 
     // Addition
     add(x,y=undefined) {
-        if (y=undefined) {
-            return new Vector2D(this.x+x.x, this.y+x.y)
+        if (y===undefined) {
+            return new Vector2D(this.x + x.x, this.y+x.y)
         } else {
-        return new Vector2D(this.x + x, this.y + y);
+            return new Vector2D(this.x + x, this.y + y);
         }
     }
 
     // Subtraction
     sub(x,y=undefined) {
-        if (y=undefined) {
+        if (y===undefined) {
             return new Vector2D(this.x-x.x, this.y-x.y)
         } else {
         return new Vector2D(this.x - x, this.y - y);

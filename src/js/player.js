@@ -52,6 +52,6 @@ Player.PlayerClass = class extends GameObject {
         }
     }
     draw() {
-        // this.graphics.position.set(this.position.x, this.position.y)
+        this.graphics.position.set(this.position.x, this.position.y)
     }
 }
