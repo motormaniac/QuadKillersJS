@@ -1,3 +1,5 @@
+//all functions produce a new Vector2D object. No function modifies any vectors involved in the operation.
+
 class Vector2D {
     constructor(x = 0, y = 0) {
         this.x = x;
@@ -90,23 +92,10 @@ class Vector2D {
         return Math.atan2(this.y, this.x);
     }
 
-    // Static zero vector
-    static zero() {
-        return new Vector2D(0, 0);
-    }
-    static one() {
-        return new Vector2D(1, 1);
-    }
-    static up() {
-        return new Vector2D(0, -1);
-    }
-    static down() {
-        return new Vector2D(0, 1);
-    }
-    static left() {
-        return new Vector2D(-1, 0);
-    }
-    static right() {
-        return new Vector2D(1, 0);
-    }
+    static ZERO = new Vector2D(0,0)
+    static ONE = new Vector2D(1, 1);
+    static UP = new Vector2D(0, -1);
+    static DOWN = new Vector2D(0, 1);
+    static LEFT = new Vector2D(-1, 0);
+    static RIGHT = new Vector2D(1, 0);
 }

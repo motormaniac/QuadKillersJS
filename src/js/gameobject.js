@@ -5,9 +5,9 @@ class GameObject {
     id = 0; //unique identifier for this object
     types = [Global.EntityTypes.DEFAULT]; //list of entity types this object belongs to
     collider = null;
-    position = Vector2D.zero();
-    velocity = Vector2D.zero();
-    acceleration = Vector2D.zero();
+    position = Vector2D.ZERO;
+    velocity = Vector2D.ZERO;
+    acceleration = Vector2D.ZERO;
     rotation = 0; //radians
     delete = false; //if true, this object will be deleted at the end of the frame
 
@@ -74,8 +74,8 @@ class GameObject {
      * Do not override
      */
     phys_update() {
-        this.velocity = this.velocity.add(this.acceleration.mul(Global.dt))
-        this.position = this.position.add(this.velocity.mul(Global.dt))
+        this.velocity = this.velocity.add(this.acceleration.mul(Global.ticker.deltaTime))
+        this.position = this.position.add(this.velocity.mul(Global.ticker.deltaTime))
     }
     draw(){}
     onDelete(){}

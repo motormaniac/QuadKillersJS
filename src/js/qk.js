@@ -1,11 +1,11 @@
 // import * as PIXI from 'pixi.js';
 
 let Global = {}
-Global.seconds = 0
-Global.dt
 Global.id = 0; //starts at 0 and increments for each new game object
 Global.entities = [] //list of gameobjects
-Global.app = null
+Global.app = null;
+Global.ticker = null;
+Global.millis = 0; //how many milliseconds have passed since the ticker started
 
 Global.EntityTypes = {
     DEFAULT: 'default',
@@ -35,8 +35,8 @@ Main.init_file = async function() {
     // Global.app.stage.addChild(graphics2)
 
     app.ticker.add((ticker) => {
-        Global.dt = ticker.deltaTime
-        Global.seconds = ticker.elapsedMS
+        Global.ticker = ticker;
+        Global.millis += ticker.elapsedMS;
         Action.update();
     });
 }

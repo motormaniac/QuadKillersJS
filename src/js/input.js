@@ -85,11 +85,11 @@ Input.InputAction = class {
     }
     /**
      * Internal function triggered when key is pressed
-     * @param {float} seconds The time in seconds this key was pressed
+     * @param {float} millis The time in millis this key was pressed
      */
-    trigger_keydown(seconds) {
+    trigger_keydown(millis) {
         if (this.allow_overlap || !this.is_pressed()) {
-            this.keydown_time = seconds;
+            this.keydown_time = millis;
             for (let event of this.keydown_events) {
                 event();
             }
@@ -97,12 +97,12 @@ Input.InputAction = class {
     }
     /**
      * Internal function triggered when key is released
-     * @param {float} seconds The time in seconds this key was released
+     * @param {float} millis The time in millis this key was released
      */
-    trigger_keyup(seconds) {
+    trigger_keyup(millis) {
         //ERRORR
         if (this.allow_overlap || !this.is_pressed()) { //this line is bugged because the keymap is switched to true before this happens
-            this.keyup_time = seconds;
+            this.keyup_time = millis;
             for (let event of this.keyup_events) {
                 event();
             }
@@ -134,7 +134,7 @@ window.onkeydown = function(keyevent) {
                 () => {
                     if (key_map_instance.is_pressed === false) {
                         //the order of these two lines is important
-                        key_map_instance.input_action.trigger_keydown(Global.seconds);
+                        key_map_instance.input_action.trigger_keydown(Global.ticker.elapsedMS);
                         key_map_instance.is_pressed = true
                     }
                 }
@@ -152,7 +152,7 @@ window.onkeyup = function(keyevent) {
                     if (key_map_instance.is_pressed === true) {
                         //order of these two lines is important
                         key_map_instance.is_pressed = false
-                        key_map_instance.input_action.trigger_keyup(Global.seconds);
+                        key_map_instance.input_action.trigger_keyup(Global.ticker.elapsedMS);
                     }
                 }
             )
