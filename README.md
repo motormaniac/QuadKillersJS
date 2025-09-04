@@ -105,3 +105,19 @@ Of course, make sure the html file matches the new file scheme (ignoring the js 
 
 # Using the Gameloop
 The arrow function binds the context it was created in
+
+# Pixi Tips
+When using graphics, make sure to set shape styling AFTER the shape is drawn. The style is applied to the latest shape that was drawn.
+```js
+//wrong
+graphics
+  .fill("#ffffff")
+  .stroke({weight:0})
+  .rect(0,0,50,50)
+
+//correct
+graphics
+  .rect(0,0,50,50)
+  .fill("#ffffff")
+  .stroke({weight:0})
+```

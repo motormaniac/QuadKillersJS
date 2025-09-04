@@ -1,10 +1,8 @@
-// import * as PIXI from "pixi.js"
-
 Player = {}
 Player.init_file = function() {
-    Player.player_graphics_context = new PIXI.Graphics()
-        .fill("#00ffff")
+    Player.player_graphics_context = new PIXI.GraphicsContext()
         .rect(-25,-25,50,50)
+        .fill("#00ffff")
 }
 
 Player.PlayerStates = {
@@ -23,8 +21,8 @@ Player.PlayerClass = class extends GameObject {
     }
 
     init() {
-        this.graphics = new PIXI.Graphics(Player.player_graphics_context)
-        // Global.app.stage.addChild(graphics)
+        this.graphics = new PIXI.Graphics(Player.player_graphics_context);
+        Global.app.stage.addChild(this.graphics);
     }
 
     change_to_state(state) {
@@ -52,6 +50,8 @@ Player.PlayerClass = class extends GameObject {
                 this.velocity = input_dir.setMag(this.max_velocity)
             }
         }
-        console.log(this.position)
+    }
+    draw() {
+        this.graphics.position.set(this.position.x, this.position.y)
     }
 }

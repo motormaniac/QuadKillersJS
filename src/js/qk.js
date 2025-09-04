@@ -23,12 +23,16 @@ Main.init_file = async function() {
     app.canvas.setAttribute('game-canvas', 'true');
     document.body.appendChild(app.canvas);
 
-    const graphics = new PIXI.Graphics();
-    graphics
-        .rect(50, 50, 100, 100)
-        .fill(0xff0000)
+    const graphics_context = new PIXI.GraphicsContext()
+    graphics_context
+        .rect(100, 100, 100, 100)
+        .fill("#ff0000")
         .stroke({width:0})
-    app.stage.addChild(graphics);
+    const graphics = new PIXI.Graphics(graphics_context);
+    Global.app.stage.addChild(graphics);
+
+    const graphics2 = new PIXI.Graphics(Player.player_graphics_context)
+    // Global.app.stage.addChild(graphics2)
 
     app.ticker.add((ticker) => {
         Global.dt = ticker.deltaTime
@@ -50,5 +54,6 @@ async function start() {
     await Main.init_file();
 
     start_game();
+    console.log(Global.app.stage.children)
 }
 start();
