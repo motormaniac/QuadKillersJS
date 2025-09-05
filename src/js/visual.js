@@ -56,39 +56,38 @@ class TextParticle {
     }
 }
 
-//I think it would be more efficient to just tile the grid so I'm gonna look into that
 function drawGrid(spacing) {
-    // Make or reuse a PIXI.Graphics object
-    if (!drawGrid.gfx) {
-        drawGrid.gfx = new PIXI.Graphics();
-        Global.app.stage.addChild(drawGrid.gfx);
-    }
+    // Draw a grid "tile"
+    let gridTile = new PIXI.Graphics();
+    gridTile.lineStyle(1, 0x000000, 0.2);
 
-    const grid = drawGrid.gfx;
-    grid.clear();
+    // x is horizontal, y is vertical lines
+    gridTile.moveTo(0, 0);
+    gridTile.lineTo(0, spacing);
 
-    grid.lineStyle(1, 0x000000, 0.2);
+    gridTile.moveTo(0, 0);
+    gridTile.lineTo(spacing, 0);
 
-    grid.setTransform(0, 0, camScale, camScale); // scale only
+    // make texture
+    let gridtTexture = app.renderer.generateTexture(
+        gridTile,
+        PIXI.SCALE_MODES.NEAREST,
+        1,
+        new PIXI.Rectangle(0, 0, spacing, spacing)
+    );
 
-    // Grid offset calculation (so it scrolls with camera)
-    let x = -camPos.x % spacing;
-    while (x >= 0) {
-        x -= spacing;
-    }
-    while (x < app.renderer.width / camScale) {
-        grid.moveTo(x, 0);
-        grid.lineTo(x, app.renderer.height / camScale);
-        x += spacing;
-    }
+    // tile texture
+    const gridTileSprite = new PIXI.TilingSprite(
+        gridTexture,
+        Global.app.renderer.width,
+        Global.app.renderer.height
+    );
 
-    let y = -camPos.y % spacing;
-    while (y >= 0) {
-        y -= spacing;
-    }
-    while (y < app.renderer.height / camScale) {
-        grid.moveTo(0, y);
-        grid.lineTo(app.renderer.width / camScale, y);
-        y += spacing;
-    }
+    Global.app.stage.addChild(gridTileSprite);
+
+    return gridTileSprite;
 }
+
+// to initialize the grid, grid = drawGrid(50)
+// to update the grid, grid.TilePosition.x = -camPos.x (offset it according to camPos)
+// to change the scale, grid.scale.set(camScale)
