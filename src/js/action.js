@@ -47,12 +47,13 @@ Action.QueuedAction = class {
 }
 
 Action.update_queue = function(queue_array) {
-    for (let [index,action] of queue_array.entries()) {
+    for (let i = queue_array.length - 1; i >= 0; i--) {
+        const action = queue_array[i];
         if (action.frameDelay > 0) {
             action.frameDelay -= 1;
         } else {
-            action.callback()
-            queue_array.splice(index, 1); //remove the item from the queue
+            action.callback();
+            queue_array.splice(i, 1); // remove the item from the queue
         }
     }
 }
@@ -62,9 +63,16 @@ Action.update = function(ticker) {
     Action.update_queue(Action.queue.entity_init);
     //pre interact
     Action.update_queue(Action.queue.pre_interact)
+    for (entity of Global.entities) {
+        entity.pre_interact()
+    }
     //check interactions
-    for (let entity of Global.entities) {
-        entity.check_interactions(entity.id, ticker);
+    for (let i=0; i < Global.entities.length; i++) {
+        //ensures that you only check each pair of objects once
+        for (let j = i+1; j < Global.entities.length; j++) {
+            Global.entities[i].check_interactions(Global.entities[j])
+            Global.entities[j].check_interactions(Global.entities[i])
+        }
     }
     //post interact
     Action.update_queue(Action.queue.post_interact);

@@ -1,5 +1,3 @@
-// import * as PIXI from 'pixi.js';
-
 let Global = {}
 Global.id = 0; //starts at 0 and increments for each new game object
 Global.entities = [] //list of gameobjects
@@ -23,17 +21,6 @@ Main.init_file = async function() {
     app.canvas.setAttribute('game-canvas', 'true');
     document.body.appendChild(app.canvas);
 
-    const graphics_context = new PIXI.GraphicsContext()
-    graphics_context
-        .rect(100, 100, 100, 100)
-        .fill("#ff0000")
-        .stroke({width:0})
-    const graphics = new PIXI.Graphics(graphics_context);
-    Global.app.stage.addChild(graphics);
-
-    const graphics2 = new PIXI.Graphics(Player.player_graphics_context)
-    // Global.app.stage.addChild(graphics2)
-
     app.ticker.add((ticker) => {
         Global.ticker = ticker;
         Global.millis += ticker.elapsedMS;
@@ -43,7 +30,12 @@ Main.init_file = async function() {
 
 function start_game() {
     let player = new Player.PlayerClass()
+    player.position = new Vector2D(200,200)
     Global.entities.push(player)
+
+    let enemy = new Enemy.WalkEnemy()
+    enemy.position = new Vector2D(100,100)
+    Global.entities.push(enemy)
 }
 
 async function start() {

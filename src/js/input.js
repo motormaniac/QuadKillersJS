@@ -126,7 +126,7 @@ Input.init_file = function() {
     // Input.context_map.game.up.add_keyup_event(function() { console.log("up released") });
 }
 
-window.onkeydown = function(keyevent) {
+window.onkeydown = (keyevent) => {
     let key_map_instance = Input.key_map[keyevent.code]
     if (key_map_instance) {
         Action.queue.input.push(
@@ -143,7 +143,7 @@ window.onkeydown = function(keyevent) {
     }
 }
 
-window.onkeyup = function(keyevent) {
+window.onkeyup = (keyevent) => {
     let key_map_instance = Input.key_map[keyevent.code]
     if (key_map_instance) {
         Action.queue.input.push(
@@ -157,5 +157,16 @@ window.onkeyup = function(keyevent) {
                 }
             )
         )
+    }
+}
+
+window.onblur = () => {
+    console.log("blur")
+    //when window blurs, deactivate all inputs
+    for (const [key, value] of Object.entries(Input.key_map)) {
+        if (value.is_pressed) {
+            value.is_pressed = false
+            value.input_action.trigger_keyup()
+        }
     }
 }

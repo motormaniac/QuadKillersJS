@@ -5,16 +5,16 @@ Player.init_file = function() {
         .fill("#00ffff")
 }
 
-Player.PlayerStates = {
-    MOVE:"move",
-    DASH:"dash",
-}
-
 Player.PlayerClass = class extends GameObject {
+    PlayerStates = {
+        MOVE:"move",
+        DASH:"dash",
+    }
+    
     types = [Global.EntityTypes.PLAYER];
-    current_state = Player.PlayerStates.MOVE
+    current_state = this.PlayerStates.MOVE
     move_acceleration = 2; //acceleration while using WASD
-    max_speed = 5
+    max_move_speed = 5
     frict_factor = 0.38; //friction
     can_move = true //whether computer inputs can control the player
     graphics = null
@@ -59,28 +59,26 @@ Player.PlayerClass = class extends GameObject {
             if (Global.millis >= this.dash_start_time + this.dash_duration + this.dash_cooldown
                 &&context.dash.is_pressed()) {
                 //start dash
-                this.current_state = Player.PlayerStates.DASH;
+                this.current_state = this.PlayerStates.DASH;
                 this.dash_start_time = Global.millis;
                 //ensure input_dir is not (0,0)
                 this.dash_dir = this.non_zero_input_dir.normalize();
             }
 
-            if (this.current_state === Player.PlayerStates.MOVE) {
+            if (this.current_state === this.PlayerStates.MOVE) {
                 //make sure that movement does not override kb effects
-                if (this.velocity.magSq() <= Math.pow(this.max_speed+0.1,2)) { //little bit of float tolerance
+                if (this.velocity.magSq() <= Math.pow(this.max_move_speed+0.1,2)) { //little bit of float tolerance
                     this.acceleration = input_dir.setMag(this.move_acceleration);
                 }
                 //apply friction proportional to velocity
                 this.acceleration = this.acceleration.add(this.velocity.mul(-this.frict_factor));
 
-            } else if (this.current_state === Player.PlayerStates.DASH) {
+            } else if (this.current_state === this.PlayerStates.DASH) {
                 if (Global.millis >= this.dash_start_time + this.dash_duration) {
                     //stop dash
-                    this.current_state = Player.PlayerStates.MOVE
+                    this.current_state = this.PlayerStates.MOVE
                 } else {
                     this.velocity = this.dash_dir.setMag(this.dash_distance / this.dash_duration)
-                    console.log(this.dash_dir)
-                    // console.log(this.dash_distance / this.dash_duration)
                     this.acceleration = Vector2D.ZERO
                 }
             }

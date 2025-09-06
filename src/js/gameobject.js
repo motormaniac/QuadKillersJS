@@ -6,8 +6,11 @@ class GameObject {
     types = [Global.EntityTypes.DEFAULT]; //list of entity types this object belongs to
     collider = null;
     position = Vector2D.ZERO;
+    posRef = new Vector2DRef(this.position)
     velocity = Vector2D.ZERO;
+    velRef = new Vector2DRef(this.velocity)
     acceleration = Vector2D.ZERO;
+    accRef = new Vector2DRef(this.acceleration)
     rotation = 0; //radians
     delete = false; //if true, this object will be deleted at the end of the frame
 
@@ -56,16 +59,17 @@ class GameObject {
      * Does a for loop through all game objects and checks for collisions/interactions.
      * @param {int} index The index of this object in the Global.entities array
      */
-    check_interactions(index) {
-        //ensures that you only check each pair of objects once
-        for (let i = index+1; i < Global.entities.length; i++) {
-            let gameobject = Global.entities[i];
-            //find the gameobject type in the interact_components dictionary and run the associated function
-            for (let type of gameobject.types) {
-                this.interact_components[type]?.run(gameobject)
+    pre_interact() {}
+    check_interactions(other) {
+        //find the gameobject type in the interact_components dictionary and run the associated function
+        for (let type of other.types) {
+            let run = this.interact_components[type]
+            if (run) {
+                run(other)
             }
         }
     }
+    post_interact(){}
     /**
      * Called when this object interacts with another object (e.g. collision)
      */
@@ -74,21 +78,12 @@ class GameObject {
      * Do not override
      */
     phys_update() {
+        this.accRef.v = this.acceleration
         this.velocity = this.velocity.add(this.acceleration.mul(Global.ticker.deltaTime))
+        this.velRef.v = this.velocity
         this.position = this.position.add(this.velocity.mul(Global.ticker.deltaTime))
+        this.posRef.v = this.position
     }
     draw(){}
     onDelete(){}
-}
-
-class InteractComponent {
-    parent = null; //the gameobject this component is attached to
-    constructor(parent) {
-        this.parent = parent;
-    }
-    /**
-     * Override this method
-     * @param {GameObject} other The other gameobject this component is interacting with
-     */
-    run(other){}
 }

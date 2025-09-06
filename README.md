@@ -8,7 +8,13 @@ FUTURE ME PLEASE READ THIS SO THAT YOU UNDERSTAND WHAT'S HAPPENING
 - [Installing Pixi](#installing-pixi)
 - [Accessing the pixi library](#accessing-the-pixi-library)
 - [Making a server](#making-a-server)
-- [Server Caching](#server-caching)
+- [Using the Gameloop](#using-the-gameloop)
+- [Functional Programming](#functional-programming)
+  - [Type 1: Function Body](#type-1-function-body)
+  - [Type 2: Lambdas](#type-2-lambdas)
+  - [Retaining Context](#retaining-context)
+  - [Operation Order with Lambdas](#operation-order-with-lambdas)
+- [Pixi Tips](#pixi-tips)
 - [Production Practices](#production-practices)
 # Basic Usage
 Comment out top comment of main.js
@@ -105,6 +111,70 @@ Of course, make sure the html file matches the new file scheme (ignoring the js 
 
 # Using the Gameloop
 The arrow function binds the context it was created in
+
+# Functional Programming
+By functional programming, I mean programming by passing functions as variables. This appears in both the action and the interact system.
+
+## Type 1: Function Body
+Function bodies are declared with the `function` keyword. This method stores **just** the function body information and nothing else.
+```js
+let myVar = 1;
+let myFunc = function(param1, param2) {
+  let result = param1 + param2
+  console.log(result) //this works
+  console.log(myVar) //does not work
+}
+
+//--------- In a completely different script -------
+myFunc() //call myFunc
+```
+Calling this function is like copy pasting the code directly into the new place you called it. If you do not call the myFunc function in a place that has the same scope access to external variables (e.g. a scope that can access `myVar`), then it **will not work**
+
+## Type 2: Lambdas
+A lambdas can be written in multiple ways like such:
+```js
+() => { console.log("Hello world") }
+() => console.log("hello world")
+(string) => console.log(string)
+```
+The difference between lambdas and functions is that lambdas retain the context they were created in.
+```js
+var myVar
+let myFunc = () => console.log(myVar)
+
+//--------completely different file--------
+myFunc() //This WILL work
+```
+In this case, the lambda allows myFunc to access myVar even though it's in a completely separate file. It gives it access to the context.
+
+Using `function` is like taking the function body and putting it in the new place, without giving it access to its old context.
+
+Using `()=>` is like calling the function from it's original place, but you call it when you want to.
+
+## Retaining Context
+If you want to use a function but retain the context, you can either of these:
+```js
+//call the function using a lambda
+()=>someFunc()
+//Bind let's someFunc access the context in 'this'
+let myFunc = someFunc.bind(this)
+```
+I personally prefer lambdas because they're more predictable
+
+## Operation Order with Lambdas
+Note this nuance with using lambdas:
+```js
+//in this example, getTime is a function that gets the time at that specific moment
+let time1 = getTime()
+let myFunc = () => {
+  let time2 = getTime()
+  console.log(time1)
+  console.log(time2)
+}
+//some time later
+myFunc()
+```
+This will work because myFunc has access to both variables. However, time1 was calculated when myFunc was **created** while time2 was calculated when myFunc was **called**. Since myFunc was called later after it was initiated, time2 will be later than time1
 
 # Pixi Tips
 When using graphics, make sure to set shape styling AFTER the shape is drawn. The style is applied to the latest shape that was drawn.

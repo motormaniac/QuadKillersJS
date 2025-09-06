@@ -1,4 +1,5 @@
 //all functions produce a new Vector2D object. No function modifies any vectors involved in the operation.
+//To get a reference to a Vector2D, use Vector2DRef
 
 class Vector2D {
     constructor(x = 0, y = 0) {
@@ -46,23 +47,23 @@ class Vector2D {
 
     // Normalize
     normalize() {
-        const mag = this.magnitude();
+        const mag = this.mag();
         return mag === 0 ? new Vector2D(0, 0) : this.div(mag);
     }
 
-    // Magnitude
-    magnitude() {
+    // mag
+    mag() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
-    // Magnitude squared
+    // mag squared
     magSq() {
         return this.x * this.x + this.y * this.y;
     }
 
-    // Set magnitude
+    // Set mag
     setMag(mag) {
-        const currentMag = this.magnitude();
+        const currentMag = this.mag();
         if (currentMag === 0) return new Vector2D(0, 0);
         return this.mul(mag / currentMag);
     }
@@ -72,11 +73,17 @@ class Vector2D {
     static lerp(v1, v2, t) {
         return v1.mul(1 - t).add(v2.mul(t));
     }
+    lerp(v2, t) {
+        return Vector2D.lerp(this, v2, t)
+    }
     static map(vector, a, b, c, d) {
         return new Vector2D(
             Util.map(vector.x, a, b, c, d),
             Util.map(vector.y, a, b, c, d)
         );
+    }
+    map(a, b, c, d) {
+        return Vector2D.map(this, a,b,c,d)
     }
     // Operator overloading using Symbol
     static [Symbol.hasInstance](instance) {
@@ -98,4 +105,14 @@ class Vector2D {
     static DOWN = new Vector2D(0, 1);
     static LEFT = new Vector2D(-1, 0);
     static RIGHT = new Vector2D(1, 0);
+}
+
+/**
+ * Vector operations create new Vector2D instances instead of modifying the ones already there. To get a reference to a Vector2D, use Vector2DRef
+ */
+class Vector2DRef {
+    v
+    constructor(v) {
+        this.v = v
+    }
 }
