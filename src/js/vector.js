@@ -67,6 +67,9 @@ class Vector2D {
         if (currentMag === 0) return new Vector2D(0, 0);
         return this.mul(mag / currentMag);
     }
+    perpendicular() {
+        return new Vector2D(-this.y, this.x)
+    }
     static random() {
         return new Vector2D(Math.random(), Math.random());
     }

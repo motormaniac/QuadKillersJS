@@ -15,7 +15,7 @@ Player.PlayerClass = class extends GameObject {
     current_state = this.PlayerStates.MOVE
     move_acceleration = 2; //acceleration while using WASD
     max_move_speed = 5
-    frict_factor = 0.38; //friction
+    frict_factor = 0.3; //friction
     can_move = true //whether computer inputs can control the player
     graphics = null
 

@@ -33,9 +33,11 @@ function start_game() {
     player.position = new Vector2D(200,200)
     Global.entities.push(player)
 
-    let enemy = new Enemy.WalkEnemy()
-    enemy.position = new Vector2D(100,100)
-    Global.entities.push(enemy)
+    for (i=0; i<5; i++) {
+        let enemy = new Enemy.WalkEnemy()
+        enemy.position = Vector2D.random().mul(300)
+        Global.entities.push(enemy)
+    }
 }
 
 async function start() {
@@ -46,6 +48,5 @@ async function start() {
     await Main.init_file();
 
     start_game();
-    console.log(Global.app.stage.children)
 }
 start();
