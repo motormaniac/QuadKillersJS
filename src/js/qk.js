@@ -14,7 +14,7 @@ Global.EntityTypes = {
 
 let Main = {}
 
-Main.init_file = async function() {
+Main.init_file = async function () {
     let app = new PIXI.Application();
     Global.app = app;
     await app.init({ background: '#555555ff', resizeTo: window });
@@ -29,11 +29,12 @@ Main.init_file = async function() {
 }
 
 function start_game() {
+
     let player = new Player.PlayerClass()
-    player.position = new Vector2D(200,200)
+    player.position = new Vector2D(200, 200)
     Global.entities.push(player)
 
-    for (i=0; i<5; i++) {
+    for (i = 0; i < 5; i++) {
         let enemy = new Enemy.WalkEnemy()
         enemy.position = Vector2D.random().mul(300)
         Global.entities.push(enemy)

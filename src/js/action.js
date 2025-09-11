@@ -59,6 +59,9 @@ Action.update_queue = function(queue_array) {
 }
 
 Action.update = function(ticker) {
+
+    //updateGrid();
+
     //entity init
     Action.update_queue(Action.queue.entity_init);
     //pre interact

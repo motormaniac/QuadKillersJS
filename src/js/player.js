@@ -9,6 +9,7 @@ Player.PlayerClass = class extends GameObject {
     PlayerStates = {
         MOVE:"move",
         DASH:"dash",
+        STUN:"stun",
     }
     
     types = [Global.EntityTypes.PLAYER];
@@ -78,6 +79,7 @@ Player.PlayerClass = class extends GameObject {
                     //stop dash
                     this.current_state = this.PlayerStates.MOVE
                 } else {
+                    
                     this.velocity = this.dash_dir.setMag(this.dash_distance / this.dash_duration)
                     this.acceleration = Vector2D.ZERO
                 }

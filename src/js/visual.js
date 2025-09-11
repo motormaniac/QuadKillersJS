@@ -1,5 +1,12 @@
 // All sprites data is held here and referenced by other files
 
+Visual.init_file = function () {
+    grid = drawGrid(50, new PIXI.Graphics()).stroke({ color: 0xffffff, pixelLine: true, width: 1 });
+    grid.x=0
+    grid.y=0
+    //app.stage.addChil(grid)
+}
+
 camPos = new Vector2D(200, 200);
 camScale = 1;
 
@@ -56,38 +63,32 @@ class TextParticle {
     }
 }
 
-function drawGrid(spacing) {
-    // Draw a grid "tile"
-    let gridTile = new PIXI.Graphics();
-    gridTile.lineStyle(1, 0x000000, 0.2);
+function drawGrid(spacing, graphics) {
+    //a graphics object is used as an argument because I'm lazy with setup
 
-    // x is horizontal, y is vertical lines
-    gridTile.moveTo(0, 0);
-    gridTile.lineTo(0, spacing);
+  let x = -camPos.x % spacing; //set x pos
+  while ( x >= 0) { //make sure there is a shape comletely off screen so that it can smoothly pan in
+    x-=spacing;
+  }
+  while (x < app.renderer.width / camScale) {
+    graphics.moveTo(x,0).lineTo(x,app.renderer.height/camScale);
+    x+=spacing;
+  }
+  
+  let y = -camPos.y % spacing; //set y pos
+  while (y >= 0) { //set y pos top edge
+      y-=spacing;
+    }
+  while (y < app.renderer.height / camScale) {
+    graphics.moveTo(0,y).lineTo(app.renderer.width/camScale,y);
+    y+=spacing;
+  }
 
-    gridTile.moveTo(0, 0);
-    gridTile.lineTo(spacing, 0);
-
-    // make texture
-    let gridtTexture = app.renderer.generateTexture(
-        gridTile,
-        PIXI.SCALE_MODES.NEAREST,
-        1,
-        new PIXI.Rectangle(0, 0, spacing, spacing)
-    );
-
-    // tile texture
-    const gridTileSprite = new PIXI.TilingSprite(
-        gridTexture,
-        Global.app.renderer.width,
-        Global.app.renderer.height
-    );
-
-    Global.app.stage.addChild(gridTileSprite);
-
-    return gridTileSprite;
+  return graphics;
 }
 
-// to initialize the grid, grid = drawGrid(50)
-// to update the grid, grid.TilePosition.x = -camPos.x (offset it according to camPos)
-// to change the scale, grid.scale.set(camScale)
+function updateGrid () {
+    grid.x=-camPos.x;
+    grid.y=-camPos.y;
+    grid.scale=(camScale)
+}
