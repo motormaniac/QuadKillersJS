@@ -1,8 +1,11 @@
 Player = {}
 Player.init_file = function() {
-    Player.player_graphics_context = new PIXI.GraphicsContext()
+    Player.player_normalGraphics_context = new PIXI.GraphicsContext()
         .rect(-25,-25,50,50)
         .fill("#00ffff")
+    Player.player_dashGraphics_context = new PIXI.GraphicsContext()
+        .rect(-25,-25,50,50)
+        .fill("#ffffff")
 }
 
 Player.PlayerClass = class extends GameObject {
@@ -32,8 +35,16 @@ Player.PlayerClass = class extends GameObject {
     }
 
     init() {
-        this.graphics = new PIXI.Graphics(Player.player_graphics_context);
-        Global.app.stage.addChild(this.graphics);
+        //initialize both dash and nondash states
+        this.normalGraphics = new PIXI.Graphics(Player.player_normalGraphics_context);
+        this.dashGraphics = new PIXI.Graphics(Player.player_dashGraphics_context);
+
+        //add both states to the canvas
+        Global.app.stage.addChild(this.normalGraphics);
+        Global.app.stage.addChild(this.dashGraphics);
+
+        //disable dash state visibility, no calculations are done for dash state until it's toggled again
+        this.dashGraphics.visible = false;
         // Input.context_map.game.dash.add_keydown_event()
     }
 
@@ -61,6 +72,8 @@ Player.PlayerClass = class extends GameObject {
                 &&context.dash.is_pressed()) {
                 //start dash
                 this.current_state = this.PlayerStates.DASH;
+                this.normalGraphics.visible = false;
+                this.dashGraphics.visible = true;
                 this.dash_start_time = Global.millis;
                 //ensure input_dir is not (0,0)
                 this.dash_dir = this.non_zero_input_dir.normalize();
@@ -78,6 +91,8 @@ Player.PlayerClass = class extends GameObject {
                 if (Global.millis >= this.dash_start_time + this.dash_duration) {
                     //stop dash
                     this.current_state = this.PlayerStates.MOVE
+                    this.dashGraphics.visible = false
+                    this.normalGraphics.visible = true
                 } else {
                     
                     this.velocity = this.dash_dir.setMag(this.dash_distance / this.dash_duration)
@@ -86,7 +101,13 @@ Player.PlayerClass = class extends GameObject {
             }
         }
     }
+
+    post_interact() {
+
+    }
+
     draw() {
-        this.graphics.position.set(this.position.x, this.position.y)
+        this.normalGraphics.position.set(this.position.x, this.position.y)
+        this.dashGraphics.position.set(this.position.x, this.position.y) //only pushed to gpu when visible, otherwise no resources used
     }
 }

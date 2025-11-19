@@ -17,7 +17,7 @@ let Main = {}
 Main.init_file = async function () {
     let app = new PIXI.Application();
     Global.app = app;
-    await app.init({ background: '#555555ff', resizeTo: window });
+    await app.init({ background: '#000000ff', resizeTo: window });
     app.canvas.setAttribute('game-canvas', 'true');
     document.body.appendChild(app.canvas);
 
@@ -29,7 +29,6 @@ Main.init_file = async function () {
 }
 
 function start_game() {
-
     let player = new Player.PlayerClass()
     player.position = new Vector2D(200, 200)
     Global.entities.push(player)
@@ -39,11 +38,16 @@ function start_game() {
         enemy.position = Vector2D.random().mul(300)
         Global.entities.push(enemy)
     }
+    
+    let bg = new Visual.BackgroundClass()
+    Global.entities.push(bg)
 }
 
 async function start() {
+    
     Enemy.init_file();
     Player.init_file();
+    Visual.init_file();
     Action.init_file();
     Input.init_file();
     await Main.init_file();
