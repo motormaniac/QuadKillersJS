@@ -17,11 +17,11 @@ Visual.BackgroundClass = class extends GameObject {
     }
 
     init() {
-        //this is the ductape n glue method, I wanna turn it into a tiling sprite if I can using the bgGrid png (or draw a grid and turn it into a texture for tiling)
+        //this grid graphic is the ductape n glue method, I wanna turn it into a tiling sprite if I can using the bgGrid png (or draw a grid and turn it into a texture for tiling)
         this.gridGraphics = new PIXI.Graphics(Visual.Visual_gridGraphics_Context);
         Global.app.stage.addChild(this.gridGraphics);
 
-        //example usage of particle
+        //example usage of particle (I could turn this into a particle container but for the time being I won't since I don't know the limitations of that yet)
         //this.shape = new Particle("ELLIPSE", 200,200,400,400,new Vector2D(200,200),200,200, 0x808080)
         //this.shape.drawShape();
         
