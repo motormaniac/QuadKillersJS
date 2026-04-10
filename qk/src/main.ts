@@ -1,9 +1,7 @@
-import {Application, GraphicsContext, Graphics} from 'pixi.js';
-import { GameManager } from './GameManager';
-
-let graphicsContext : GraphicsContext = new GraphicsContext()
-  .rect(0, 0, 100, 100)
-  .fill('#ff0000');
+import { Application } from 'pixi.js';
+import { gameManager, initGameManager } from './GameManager';
+import { createEventManager } from './EventManager';
+import { ContextEnum, initInputManager, inputManager } from './InputManager';
 
 (async () => {
   let app = new Application();
@@ -12,13 +10,16 @@ let graphicsContext : GraphicsContext = new GraphicsContext()
   canvas.classList.add('game-canvas');
   document.body.appendChild(canvas);
   
-  let gameManager = new GameManager(app.stage);
+  initInputManager();
+  initGameManager(app.stage);
+  createEventManager();
   gameManager.startGame();
 
-  let graphics = new Graphics(graphicsContext);
-  app.stage.addChild(graphics);
+  // let graphics = new Graphics(graphicsContext);
+  // app.stage.addChild(graphics);
 
   app.ticker.add((ticker) => {
-    gameManager.update(ticker.deltaTime);
+    gameManager.update(ticker);
+    console.log(inputManager.getAction(ContextEnum.GAME, "up").isPressed);
   });
 })()
