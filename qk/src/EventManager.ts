@@ -1,8 +1,11 @@
+import { logError } from "./Error";
+
 export let eventManager: EventManager;
 
-export function createEventManager() {
+export function createEventManager(): EventManager {
     if (eventManager) {
-        throw new Error("EventManager instance already exists");
+        logError("EventManager instance already exists");
+        return eventManager;
     }
     eventManager = new EventManager();
     return eventManager;

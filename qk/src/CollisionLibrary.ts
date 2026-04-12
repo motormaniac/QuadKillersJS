@@ -4,6 +4,7 @@
 
 import { Vec } from "./Vector";
 
+// Stores the types of different colliders
 export let ColliderEnum = {
   BOX:0,
   CIRCLE:1,
@@ -12,14 +13,25 @@ export let ColliderEnum = {
 export type ColliderEnumType = typeof ColliderEnum[keyof typeof ColliderEnum]
 
 export interface Collider {
+  /** Gets the type of the collider */
   get type(): ColliderEnumType;
-  translate(newPos: Vec): void;
+  /** Returns a new Collider that is translated by this amount */
+  translate(delta: Vec): Collider;
+  /**
+   * The boundingBox is a box collider that encloses this collider. 
+   * It is used for broad-phase collision detection. If two colliders' bounding boxes do not collide, then the colliders themselves cannot collide.
+   * Note that the bounding box is not necessarily the smallest box that can enclose the collider, but it should be a reasonably tight fit to avoid too many false positives in broad-phase collision detection.
+   * */
+  get boundingBox(): BoxColl;
 }
 
-// Collision testing function
-export function testColl(a: Collider, b: Collider): boolean {
-  if (a == null || b == null) return false;
-
+/**
+ * Automatically detects the type of the colliders and applies the appropriate collision detection function.
+ * @param a First Collider
+ * @param b Second Collider
+ * @returns True if the colliders collide, false otherwise
+ */
+export function testCollision(a: Collider, b: Collider): boolean {
   const aType:ColliderEnumType = a.type;
   const bType:ColliderEnumType = b.type;
 
@@ -50,32 +62,43 @@ export function testColl(a: Collider, b: Collider): boolean {
   return coll;
 }
 
-// BoxColl class
+/** Collider representing a box orthoganal to the global coordinate plane */
 export class BoxColl implements Collider {
   get type() {
     return ColliderEnum.BOX;
   }
-  // left corner to right corner
+  // Top left corner
   #p1: Vec;
+  // Bottom right corner
   #p2: Vec;
+  // Top left corner
   get p1() { return this.#p1; }
+  // Top right corner
   get p2() { return this.#p2; }
   get center() { return new Vec(0.5 * (this.p1.x + this.p2.x), 0.5 * (this.p1.y + this.p2.y)); }
   get size() { return new Vec(this.p2.x - this.p1.x, this.p2.y - this.p1.y); }
+  /**
+   * No matter where the corners are placed, the constructor will rearrange them so that p1 is the top left corner and p2 is the bottom right corner.
+   * @param p1 top left corner
+   * @param p2 bottom right corner
+   */
   constructor(p1: Vec, p2: Vec) {
     // Ensure p1 is the "top-left" point and p2 is the "bottom-right" point
     this.#p1 = new Vec(Math.min(p1.x, p2.x), Math.min(p1.y, p2.y));
     this.#p2 = new Vec(Math.max(p1.x, p2.x), Math.max(p1.y, p2.y));
   }
 
+  /** Specify two opposite corners of the box */
   static useCorners(leftX: number, topY: number, rightX: number, bottomY: number) {
     return new BoxColl(new Vec(leftX, topY), new Vec(rightX, bottomY));
   }
 
+  /** Create a box collider using the top left corner and dimensions */
   static useCornerAndSize(leftX: number, topY: number, width: number, height: number) {
     return new BoxColl(new Vec(leftX, topY), new Vec(leftX + width, topY + height));
   }
 
+  /** Create a box collider using the center and dimensions */
   static useCenter(centerX: number, centerY: number, width: number, height: number) {
     return new BoxColl(
       new Vec(centerX - (0.5 * width), centerY - (0.5 * height)),
@@ -89,9 +112,12 @@ export class BoxColl implements Collider {
       this.p2.add(delta)
     );
   }
+  get boundingBox() {
+    return this;
+  }
 }
 
-// LineColl class
+/** Collider representing a line segment */
 export class LineColl implements Collider {
   get type() {
     return ColliderEnum.LINE;
@@ -126,7 +152,7 @@ export class LineColl implements Collider {
   }
 }
 
-// CircleColl class
+/** Collider representing a circle */
 export class CircleColl implements Collider {
   get type() {
     return ColliderEnum.CIRCLE;
@@ -157,8 +183,11 @@ export class CircleColl implements Collider {
   }
 }
 
+// =====================
 // Collision detection functions
-export function BoxBoxColl(b1: BoxColl, b2: BoxColl) {
+// =====================
+
+function BoxBoxColl(b1: BoxColl, b2: BoxColl) {
   // Utilizes the convention that x1 < x2 and y1 < y2
   return !(
     b1.p1.x > b2.p2.x ||
@@ -168,11 +197,11 @@ export function BoxBoxColl(b1: BoxColl, b2: BoxColl) {
   );
 }
 
-export function CircleCircleColl(c1: CircleColl, c2: CircleColl) {
+function CircleCircleColl(c1: CircleColl, c2: CircleColl) {
   return c2.center.sub(c1.center).magSq() < (c1.radius + c2.radius) * (c1.radius + c2.radius);
 }
 
-export function LineLineColl(l1: LineColl, l2: LineColl) {
+function LineLineColl(l1: LineColl, l2: LineColl) {
   if (!BoxBoxColl(l1.boundingBox, l2.boundingBox)) return false;
 
   if (
@@ -196,7 +225,7 @@ export function LineLineColl(l1: LineColl, l2: LineColl) {
   return s1 >= 0 && s1 <= 1 && s2 >= 0 && s2 <= 1;
 }
 
-export function BoxLineColl(b: BoxColl, l: LineColl) {
+function BoxLineColl(b: BoxColl, l: LineColl) {
   // First do a general bounding box collision detection
   if (!BoxBoxColl(b, l.boundingBox)) return false;
 
@@ -210,11 +239,11 @@ export function BoxLineColl(b: BoxColl, l: LineColl) {
   return !((y1 < b.p1.y && y2 < b.p1.y) || (y1 > b.p2.y && y2 > b.p2.y));
 }
 
-export function LineBoxColl(l: LineColl, b: BoxColl) {
+function LineBoxColl(l: LineColl, b: BoxColl) {
   return BoxLineColl(b, l);
 }
 
-export function BoxCircleColl(b: BoxColl, c: CircleColl) {
+function BoxCircleColl(b: BoxColl, c: CircleColl) {
   // Overall bounding box check
   if (!BoxBoxColl(b, c.boundingBox)) return false;
 
@@ -228,11 +257,11 @@ export function BoxCircleColl(b: BoxColl, c: CircleColl) {
   return x * x + y * y < c.radius * c.radius;
 }
 
-export function CircleBoxColl(c: CircleColl, b: BoxColl) {
+function CircleBoxColl(c: CircleColl, b: BoxColl) {
   return BoxCircleColl(b, c);
 }
 
-export function LineCircleColl(l: LineColl, c: CircleColl) {
+function LineCircleColl(l: LineColl, c: CircleColl) {
   // Bounding box check
   if (!BoxLineColl(c.boundingBox, l)) return false;
 
@@ -250,6 +279,6 @@ export function LineCircleColl(l: LineColl, c: CircleColl) {
   return AC.magSq() - dot * dot < c.radius * c.radius; // Pythagorean theorem
 }
 
-export function CircleLineColl(c: CircleColl, l: LineColl) {
+function CircleLineColl(c: CircleColl, l: LineColl) {
   return LineCircleColl(l, c);
 }

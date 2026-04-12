@@ -1,7 +1,7 @@
 import { Application } from 'pixi.js';
 import { gameManager, initGameManager } from './GameManager';
 import { createEventManager } from './EventManager';
-import { ContextEnum, initInputManager, inputManager } from './InputManager';
+import { initInputManager } from './InputManager';
 
 (async () => {
   let app = new Application();
@@ -15,11 +15,7 @@ import { ContextEnum, initInputManager, inputManager } from './InputManager';
   createEventManager();
   gameManager.startGame();
 
-  // let graphics = new Graphics(graphicsContext);
-  // app.stage.addChild(graphics);
-
   app.ticker.add((ticker) => {
     gameManager.update(ticker);
-    console.log(inputManager.getAction(ContextEnum.GAME, "up").isPressed);
   });
 })()

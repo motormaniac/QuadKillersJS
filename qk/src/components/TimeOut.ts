@@ -1,22 +1,20 @@
 import { gameManager } from "../GameManager";
-import { Component, type GameObject } from "../GameObject";
+import { Component } from "../GameObject";
 
+/** Destroys this GameObject after a specified time */
 export class TimeOutComponent extends Component {
   #timeLimit: number;
   #elapsed: number = 0;
-  #callback: Function;
-  constructor(time: number, callback: Function) {
+  constructor(time: number) {
     super();
     this.#timeLimit = time;
-    this.#callback = callback;
   }
 
-  update(gameObject: GameObject) {
-    this.#elapsed += gameManager.deltaTime;
+  update() {
+    this.#elapsed += gameManager.ticker.deltaTime;
     if (this.#elapsed >= this.#timeLimit) {
-      this.#callback();
       // destroy the component after the timeout is reached
-      gameObject.destroy();
+      this.gameObject.destroy();
     }
   }
 }
